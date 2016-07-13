@@ -1,0 +1,66 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.tiago.onlyjokes.MainActivity">
+    <!--item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        android:icon="@drawable/ic_share"
+        app:showAsAction="never|withText" /-->
+
+    <!--item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/action_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" /-->
+    <item
+        android:id="@+id/action_share"
+        android:orderInCategory="100"
+        android:title="@string/action_share"
+        android:icon="@drawable/ic_share"
+        app:showAsAction="never|withText" />
+    <item
+        android:id="@+id/action_theme"
+        android:orderInCategory="100"
+        android:title="@string/action_theme"
+        android:icon="@drawable/ic_share"
+        app:showAsAction="never|withText" />
+    <item
+        android:id="@+id/action_search"
+        android:orderInCategory="100"
+        android:title="@string/action_search"
+        android:icon="@drawable/ic_search"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_list"
+        android:orderInCategory="100"
+        android:title="@string/action_list"
+        android:icon="@drawable/ic_list"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_speak"
+        android:orderInCategory="100"
+        android:title="@string/action_list"
+        android:icon="@drawable/ic_speak"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_sendjoke"
+        android:orderInCategory="101"
+        android:title="@string/action_sendjoke"
+        app:showAsAction="never|withText" />
+
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="102"
+        android:title="@string/action_about"
+        android:icon="@drawable/ic_about"
+        app:showAsAction="never|withText" />
+
+</menu>

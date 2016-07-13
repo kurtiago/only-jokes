@@ -1,0 +1,64 @@
+<resources>
+    <dimen name="device_size">2dp</dimen>
+
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="console_height">40dp</dimen>
+    <dimen name="banner_height">40dp</dimen>
+
+
+
+    <dimen name="navigation_drawer_width">240dp</dimen>
+    <dimen name="text_size_a">23sp</dimen>
+    <dimen name="text_size_b">21sp</dimen>
+    <dimen name="text_size_large_a">33sp</dimen>
+    <dimen name="text_size_large_b">30sp</dimen>
+    <dimen name="text_size_title">47sp</dimen>
+    <dimen name="text_size_newTV">20sp</dimen>
+    <dimen name="text_size_infoTVtwo">20sp</dimen>
+    <dimen name="text_size_infoTVone">14sp</dimen>
+
+    <dimen name="margin_small">10dp</dimen>
+    <dimen name="margin_medium">15dp</dimen>
+    <dimen name="margin_large">20dp</dimen>
+    <dimen name="margin_above_title">25dp</dimen>
+
+    <!-- My custom general size list DP -->
+    <dimen name="t_3dp">3dp</dimen>
+    <dimen name="t_5dp">5dp</dimen>
+    <dimen name="t_6dp">6dp</dimen>
+    <dimen name="t_10dp">10dp</dimen>
+    <dimen name="t_12dp">12dp</dimen><!-- bottom margin for dice icon -->
+    <dimen name="t_15dp">15dp</dimen>
+    <dimen name="t_20dp">20dp</dimen>
+    <dimen name="t_25dp">25dp</dimen>
+    <dimen name="t_30dp">30dp</dimen>
+    <dimen name="t_40dp">40dp</dimen>
+    <dimen name="t_45dp">45dp</dimen>
+    <dimen name="t_48dp">48dp</dimen>
+    <dimen name="t_50dp">50dp</dimen>
+
+    <dimen name="t_60dp">60dp</dimen>
+    <dimen name="t_70dp">70dp</dimen>
+    <dimen name="t_80dp">80dp</dimen>
+    <dimen name="t_200dp">200dp</dimen>
+
+    <!-- My custom general size list SP -->
+    <dimen name="t_10sp">10sp</dimen>
+    <dimen name="t_12sp">12sp</dimen>
+    <dimen name="t_15sp">15sp</dimen>
+    <dimen name="t_18sp">18sp</dimen>
+    <dimen name="t_20sp">20sp</dimen>
+    <dimen name="t_22sp">22sp</dimen>
+    <dimen name="t_25sp">25sp</dimen>
+    <dimen name="t_28sp">28sp</dimen>
+    <dimen name="t_30sp">30sp</dimen>
+    <dimen name="t_40sp">40sp</dimen>
+    <dimen name="t_50sp">50sp</dimen>
+    <dimen name="t_60sp">60sp</dimen>
+
+
+
+</resources>

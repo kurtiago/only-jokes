@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/t_15dp">
+
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView" >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:showDividers="middle">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView3"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/t_18sp"
+                    android:text="About"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="@dimen/t_10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/versionTV"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/t_18sp"
+                    android:text="version: 1.0"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="What&apos;s new in this version?"
+                android:id="@+id/whatIsNewTV"
+                android:layout_marginBottom="@dimen/t_10sp"
+                android:textColor="#1d42fd"
+                android:clickable="true"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/thanks_description"
+                android:id="@+id/messageTV"
+                android:layout_gravity="center_horizontal"
+                android:textSize="@dimen/t_15sp"
+                android:visibility="visible"
+                android:textColor="@color/abc_primary_text_material_light" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:weightSum="3"
+                android:gravity="center_vertical"
+                android:clickable="false">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|center_vertical"
+                    android:layout_weight="2"
+                    android:clickable="true"
+                    android:id="@+id/emailLL">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Developed by: "
+                        android:id="@+id/someTV2"
+                        android:textSize="@dimen/t_18sp"
+                        android:layout_below="@+id/pillsDescriptionTV"
+                        android:layout_alignRight="@+id/pillsDescriptionTV"
+                        android:layout_alignEnd="@+id/pillsDescriptionTV"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/email"
+                        android:id="@+id/emailTV"
+                        android:autoLink="email"
+                        android:gravity="center_horizontal"
+                        android:clickable="true"
+                        android:textSize="@dimen/t_12sp"
+                        android:maxLines="1"
+                        android:lines="1" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/t_30dp"
+                    android:id="@+id/logoIV"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/logo_tiago"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:id="@+id/someTV1"
+                android:layout_weight="1"
+                android:textSize="@dimen/t_18sp"
+                android:text="Other free apps I&apos;ve developed:"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/t_10dp"
+                android:layout_marginBottom="@dimen/t_10dp" />
+
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/t_200dp"
+                android:id="@+id/horizontalScrollView" >
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/eng_pills_BT"
+                        android:src="@drawable/engpills_button"
+                        android:layout_weight="1"
+                        android:adjustViewBounds="true"
+                        android:visibility="visible" />
+
+                    <TextView
+                        android:layout_width="@dimen/t_10dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/some_TV2" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/quick_pron_BT"
+                        android:src="@drawable/quickpron_button"
+                        android:layout_weight="1"
+                        android:adjustViewBounds="true"
+                        android:visibility="visible" />
+
+
+                    <TextView
+                        android:layout_width="@dimen/t_10dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/some_TV3" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/question_prompt_BT"
+                        android:src="@drawable/questionprompt_button"
+                        android:layout_weight="1"
+                        android:adjustViewBounds="true"
+                        android:visibility="visible" />
+
+                    <TextView
+                        android:layout_width="@dimen/t_10dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/some_TV4" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/quick_vocab_BT"
+                        android:src="@drawable/quickvocab_button"
+                        android:layout_weight="1"
+                        android:adjustViewBounds="true"
+                        android:visibility="visible" />
+
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="scroll for more >>"
+                android:id="@+id/textView4"
+                android:layout_gravity="right" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/credits"
+                android:autoLink="web"
+                android:textSize="@dimen/t_12sp"
+                android:id="@+id/textView" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Only Jokes</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_share">Share App</string>
+    <string name="action_theme">Day/Night</string>
+    <string name="action_search">Search Joke</string>
+    <string name="action_list">View List</string>
+    <string name="action_speak">Speak</string>
+    <string name="action_card">Cards</string>
+    <string name="action_about">About</string>
+    <string name="action_sendjoke">Suggest a joke</string>
+    <string name="banner_ad_unit_id">ca-app-pub-9563082889139022/8979908191</string>
+    <string name="message_changelog">
+        - More jokes added
+        \n- Save your favorite jokes to read any time.
+        \n- New category: Intellectual jokes
+        \n- Other minor improvements
+        \n
+        \nHave a great time!"
+    </string>
+    <string name="thanks_description">Thanks for using Only Jokes! This is an independent app, made by one person (me).
+        I\'m an English tutor and I dedicate much of my free time developing this and other apps, in the hope they will help many people learn English and have a good time.
+        If you find any errors or typos, please send me an email, and I\'ll fix them as soon as possible. Most of these jokes were found on the web, if you own any of them, contact me and I\'ll give you the credits for it.
+        Keep sending jokes and suggestions!</string>
+
+    <!-- use with android:autoLink="email" in the layout file-->
+    <string name="email"><a href="mailto:tienglishtutor@gmail.comSubject=Only%20Jokes" target="_top">tienglishtutor@gmail.com</a></string>
+    <!-- use with android:autoLink="web" in the layout file-->
+    <string name="credits">Credits:\n<div>Icons made by Madebyoliver and FreePik from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div></string>
+</resources>
