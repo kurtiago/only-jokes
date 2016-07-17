@@ -1,7 +1,6 @@
 package com.tiago.onlyjokes;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.ads.AdListener;
@@ -21,10 +20,13 @@ public class GoogleAdListener extends AdListener {
     public void onAdLoaded() {
         //if (BuildConfig.DEBUG) {Log.d(Constants.LOG, "onAdLoaded: cheguei");}
         //Display the AdView if an Ad is loaded
-        mAdView.setVisibility(View.VISIBLE);
-
-
+        if(MainActivity.isPro){
+            mAdView.setVisibility(View.GONE);
+        }else{
+            mAdView.setVisibility(View.VISIBLE);
+        }
     }
+
     @Override
     public void onAdFailedToLoad(int errorCode) {
         // Code to be executed when an ad request fails.

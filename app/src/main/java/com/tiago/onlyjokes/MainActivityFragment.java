@@ -1,15 +1,11 @@
 package com.tiago.onlyjokes;
 
-import android.content.DialogInterface;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -61,7 +57,7 @@ public class MainActivityFragment extends Fragment implements CategoriesRecycler
         //}else{
         //    myCategoriesRecyclerAdapter.add(0, "Adult (locked)", R.drawable.pic_momma);
         //}
-        //myCategoriesRecyclerAdapter.add(0, "Adult", R.drawable.pic_adult); //TODO add next version
+        myCategoriesRecyclerAdapter.add(0, "Adult", R.drawable.pic_adult);
         myCategoriesRecyclerAdapter.add(0, "Yo Momma", R.drawable.pic_momma);
         myCategoriesRecyclerAdapter.add(0, "Intellectual", R.drawable.pic_brain);//v1.2
         myCategoriesRecyclerAdapter.add(0, "Bumper Stickers", R.drawable.pic_car);

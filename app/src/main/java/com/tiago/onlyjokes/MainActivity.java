@@ -16,15 +16,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.app.NotificationCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +30,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +44,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.tiago.onlyjokes.util.IabHelper;
+import com.tiago.onlyjokes.util.IabResult;
+import com.tiago.onlyjokes.util.Inventory;
+import com.tiago.onlyjokes.util.Purchase;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -56,7 +59,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements CategoriesRecyclerAdapter.OnItemClickListener{
-
+    private static final String TAG = "MainActivity";
     static Typeface jokeFont, myFont2;
     static String screen = "home";
     static String currentJoke="";
@@ -71,13 +74,12 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
 
     static boolean showBanner = true;
     static boolean showInterstitial = true;
-    static boolean isPro = false;//TODO check if it's false before update
     static ArrayList<String> favsList = new ArrayList<>();
+    static ArrayList<String> seenList = new ArrayList<>();
     boolean nightModeSet = false;
 
-    static Float newVersion = 1.2F; //TODO increment every update
+    static Float newVersion = 1.3F; //TODO increment every update
 
-    //FloatingActionButton fab;
     TTSManager ttsManager = null;
 
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
@@ -88,6 +90,15 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
     private String ONLINE_VERSION_NUMBER = "version_only_jokes";
     int latestBuildNumber = BuildConfig.VERSION_CODE;
     //String latestBuildName = BuildConfig.VERSION_NAME;
+
+    //v1.3 in app billing
+    IabHelper mHelper;
+    static boolean isPro;
+    static final String SKU_PREMIUM = "premium";
+    final String myUniqueID = "fQ4x0";
+    final String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn/+0+90F5aGV/c41CJfH2hgcdkMXY4Rr3GV1HVlN9yXMu4GDRnh+LpsvFszzdVeuollDDZ2Qctb6MtVV+vLRzcV0AMOckAEQbahXujksCN8YJ8vjA2MuIfDTUYMBJ8Sd6Iqz3MSpWyLbNLvZi3/+nZkYewCFGP4TBbrdpdrxuRVRHPMMaD42IT1SVUr9YxKA1ja83jmhvpuQMXBsK9G+qUu5FrTO3e468735WTPxGzaVdr1Sft+GDfHMg39DVRmyPLzzfpj+e8A4ZfZEA0QRVKhNFane0mKydBKcETT6uNQII14ZhggrQC2KsLz+TxsO/K4WUg2lYLbZGm7OxFxa8wIDAQAB";
+    String payloadPremium;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,24 +112,14 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         inflateFragment(screen);
 
         MobileAds.initialize(getApplicationContext(), "ca-app-pub-9563082889139022~4549708599");
 
         myFont2 = Typeface.createFromAsset(getAssets(), "mailraystuff.ttf");
         jokeFont = Typeface.createFromAsset(getAssets(), "HelvetiHand.ttf");
-
-        //fab = (FloatingActionButton) findViewById(R.id.fab);
-        //fab.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View view) {
-        //        inflateFragment("jokes");
-        //        //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        //        //        .setAction("Action", null).show();
-        //        //mlayoutmanager.scrollToPositionWithOffset(0,0);
-        //    }
-        //});
-        //fab.hide();
 
         //init TTS
         ttsManager = new TTSManager();
@@ -166,16 +167,183 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
         fetchConfig();
         showChangeLog();
 
-        checkProHandler.postDelayed(checkProRunnable, 100);
+
         loadFavs();
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        isPro = sp.getBoolean("isPro", false);
+        initIAB();
+        //if(!isPro){
+        //    initIAB();//1.3
+        //}else{
+        //    checkProHandler.post(checkProRunnable);
+        //}
+        //isPro = true; //use for debugging
     }
+
+    /**In app billing*/
+    public void initIAB(){
+        Log.d(TAG, "initIAB: aqui");
+        //init payloads
+        payloadPremium = myUniqueID +SKU_PREMIUM;
+
+        mHelper = new IabHelper(this, base64EncodedPublicKey);
+
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+
+            public void onIabSetupFinished(IabResult result) {
+                if (!result.isSuccess()) {
+                    Log.d(TAG, "In-app Billing setup failed: " + result);
+                } else {
+                    Log.d(TAG, "In-app Billing is set up OK");
+                    mHelper.queryInventoryAsync(mReceivedInventoryListener);
+
+                }
+            }
+        });
+        mHelper.enableDebugLogging(true);
+    }
+
+    public boolean shouldConsume = false;//TODO for debugging purposes
+    IabHelper.QueryInventoryFinishedListener mReceivedInventoryListener
+            = new IabHelper.QueryInventoryFinishedListener() {
+        public void onQueryInventoryFinished(IabResult result,
+                                             Inventory inventory) {
+            Log.d(TAG, "onQueryInventoryFinished: aqui");
+            // Do we have the premium upgrade?
+            Purchase purchasePremium = inventory.getPurchase(SKU_PREMIUM);
+            isPro = (purchasePremium != null && verifyDeveloperPayload(purchasePremium));
+            Log.d(TAG, "Query inventory finished.");
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("isPro", isPro);
+            editor.apply();
+
+            // Have we been disposed of in the meantime? If so, quit.
+            if (mHelper == null) return;
+
+            // Is it a failure?
+            if (result.isFailure()) {
+                Log.d(TAG, "Failed to query inventory: " + result);
+                //showToastMessage("xeguei fail");
+                return;
+            }else if(shouldConsume){ //not necessary to consume, so It knows premium is bought when initialize app
+                shouldConsume = false;
+                mHelper.consumeAsync(inventory.getPurchase(SKU_PREMIUM),
+                        mConsumeFinishedListener);
+            }
+
+            checkProHandler.post(checkProRunnable);//finally show or hide ads accordingly
+            //updateUI();
+            //Log.d(TAG, "Query inventory was successful.");
+        }
+    };
+
+    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener =
+            new IabHelper.OnConsumeFinishedListener() {
+                public void onConsumeFinished(Purchase purchase,
+                                              IabResult result) {
+                    Log.d(TAG, "onConsumeFinished: aqui");
+                    //showToastMessage("xeguei yeah");
+                    if (result.isSuccess()) {
+                        //isPremium = true;
+                        //clickButton.setEnabled(true);
+                    } else {
+                        // handle error
+                        showToastMessage("Oh noes");
+                        //updateUI();
+                    }
+                }
+            };
+
+    boolean verifyDeveloperPayload(Purchase p) {
+        Log.d(TAG, "verifyDeveloperPayload: aqui");
+        String responsePayload = p.getDeveloperPayload();
+        if(responsePayload != null && (responsePayload.equals(payloadPremium))){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data)
+    {
+        if (!mHelper.handleActivityResult(requestCode,
+                resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    public void showProDialog(){
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.setTitle("Buy pro version?");
+        alertDialog.setMessage(getString(R.string.message_buy_pro));
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "buy",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        buyPremium();
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
+    public void buyPremium() {
+        mHelper.launchPurchaseFlow(this, SKU_PREMIUM, 10001,
+                mPurchaseFinishedListener, payloadPremium);
+    }
+
+    public void consumePremium(){
+        shouldConsume = true;
+        //if(mHelper==null){//it was a test
+        //    mHelper = new IabHelper(this, base64EncodedPublicKey);
+        //}
+        mHelper.queryInventoryAsync(mReceivedInventoryListener);
+        //showToastMessage("you consumed this crap");
+    }
+
+    IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener
+            = new IabHelper.OnIabPurchaseFinishedListener() {
+
+
+        public void onIabPurchaseFinished(IabResult result,
+                                          Purchase purchase) {
+            Log.d(TAG, "onIabPurchaseFinished: aqui");
+            if (result.isFailure()) {
+                // Handle error
+                return;
+            } else if (purchase.getSku().equals(SKU_PREMIUM)) {
+                //consumeItem(); //the line below is from this method, which is useless now
+                mHelper.queryInventoryAsync(mReceivedInventoryListener);
+                isPro = true;
+                //buyButton.setEnabled(false);
+            }
+        }
+    };
+    /**In app billing*/
 
     @Override
     public void onResume() {
         super.onResume();
+        //if (mAdView != null) {
+        //    mAdView.resume();
+        //}
         if (mAdView != null) {
-            mAdView.resume();
+            if(isPro){
+                if(mAdView.getVisibility()==View.VISIBLE) mAdView.setVisibility(View.GONE);
+            }else{
+                mAdView.resume();
+            }
         }
+        loadSeen();
     }
 
     @Override
@@ -183,6 +351,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
         if (mAdView != null) {
             mAdView.pause();
         }
+        saveSeen();
         super.onPause();
     }
 
@@ -193,6 +362,9 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
         if (mAdView != null) {
             mAdView.resume();
         }
+        //1.3 IAB
+        if (mHelper != null) mHelper.dispose();
+        mHelper = null;
 
     }
 
@@ -213,6 +385,8 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
         }
     }
 
+
+
     public void deleteFav(){
         favsList.remove(new String(currentId));
         showToastMessage("Favorite deleted");
@@ -229,7 +403,57 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
             showToastMessage("Something happened.");
         }
     }
+    static boolean shouldInstantiate = false; //fix for calling this many times
+    public void addSeen(){
+        ImageView newIV = (ImageView) findViewById(R.id.newIV);
+        if(!seenList.contains(currentId)){
+            if(seenList!=null){
+                seenList.add(currentId);
+                System.out.println("cheguei addSeen - NEW seenList: "+seenList);
+                //saveSeen();
 
+                if (newIV != null) {
+                    newIV.setVisibility(View.VISIBLE);
+                    shouldInstantiate = true;
+                    FullscreenFragment.viewPager.getAdapter().notifyDataSetChanged();
+                }
+
+            }else{
+                showToastMessage("Something happened.");
+            }
+        }else{
+            System.out.println("cheguei addSeen - OLD seenList: "+seenList);
+            if (newIV != null) {
+                newIV.setVisibility(View.INVISIBLE);
+                shouldInstantiate = true;
+                FullscreenFragment.viewPager.getAdapter().notifyDataSetChanged();
+            }
+        }
+        //FullscreenFragment.viewPager.getAdapter().notifyDataSetChanged();
+    }
+
+    public void saveSeen(){
+        Set<String> set = new HashSet<String>();
+        set.addAll(seenList);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putStringSet("seenJokes", set);
+        editor.apply();
+        loadSeen();
+        //FullscreenFragment.viewPager.getAdapter().notifyDataSetChanged();
+        //FullscreenFragment.viewPager.destroyDrawingCache();
+    }
+
+    public void loadSeen(){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        Set<String> set = sp.getStringSet("seenJokes", null);
+        if( set != null){
+            seenList.clear();
+            for (String str : set)
+                seenList.add(str);
+            System.out.println("cheguei loadSeen - seenList: "+seenList);
+        }
+    }
     public void saveFavs(){
         Set<String> set = new HashSet<String>();
         set.addAll(favsList);
@@ -244,22 +468,19 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
     public void loadFavs(){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         Set<String> set = sp.getStringSet("favorites", null);
-
         if( set != null){
             favsList.clear();
             for (String str : set)
                 favsList.add(str);
             System.out.println("cheguei loadFavs - favsList: "+favsList);
         }
-
     }
 
     private void fetchConfig() {
         //System.out.println("cheguei - fetchDiscount");
 
-        long cacheExpiration = 10; // 1 hour in seconds.
-        // If in developer mode cacheExpiration is set to 0 so each fetch will retrieve values from
-        // the server.
+        long cacheExpiration = 1000; // 1 hour in seconds.
+        // If in developer mode cacheExpiration is set to 0 so each fetch will retrieve values from the server.
         if (mFirebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
             cacheExpiration = 0;
         }
@@ -302,11 +523,16 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
         notificationManager.notify(notificationId, nBuilder.build());
     }
 
+    static boolean shouldShowToast = true; //runs pro version toast only once
     private final Handler checkProHandler = new Handler();
     private final Runnable checkProRunnable = new Runnable() {
         public void run() {
             if(isPro){
-                showToastMessage("You have pro! Thanks for supporting this app.");
+                if(shouldShowToast){
+                    showToastMessage("You have pro version! Thanks for supporting this app.");
+                    shouldShowToast = false;
+                }
+
             }else{
                 if(showInterstitial){
                     mInterstitialAd = new InterstitialAd(MainActivity.this);
@@ -316,7 +542,6 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
                         @Override
                         public void onAdClosed() {
                             requestNewInterstitial();
-                            //inflateFragment("home");
                         }
                     });
 
@@ -324,13 +549,14 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
                 }
                 if(showBanner){
                     mAdView.setAdListener(new GoogleAdListener(MainActivity.this, mAdView));
-                    //mAdView.setVisibility(View.VISIBLE);
-
                     AdRequest adRequest = new AdRequest.Builder()
                             .addTestDevice("7826F88C35A0EFF3FFB01D2CCA5B2D87")
                             .build();
                     mAdView.loadAd(adRequest);
                 }
+                //if(isPro && mAdView!=null && mAdView.getVisibility()==View.VISIBLE){//1.3 it will remove banner right after user bought pro version
+                //    mAdView.setVisibility(View.GONE);
+                //}
             }
         }
     };
@@ -340,14 +566,12 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
             AdRequest adRequest = new AdRequest.Builder()
                     .addTestDevice("7826F88C35A0EFF3FFB01D2CCA5B2D87")
                     .build();
-
             mInterstitialAd.loadAd(adRequest);
         }
 
     }
 
     public void showInterstitial(){
-
         if(showInterstitial && !isPro && mInterstitialAd.isLoaded()) {// it will check for interstitials and display it
             if(MainActivity.interstitialCooldown >0){
                 MainActivity.interstitialCooldown--;
@@ -457,7 +681,10 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            goBack();
+        }
         //noinspection SimplifiableIfStatement
         //if (id == R.id.action_settings) {
         //    return true;
@@ -488,11 +715,27 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
            inflateFragment("search");
             return true;
         }
-        if (id == R.id.action_search) {
+        if (id == R.id.action_buy_pro) {
+            if(!isPro){
+                //buyPremium();
+                showProDialog();
+            }else{
+                showToastMessage("You already have pro version.");
+            }
+            return true;
+        }
+
+        if (id == R.id.action_sendjoke) {
             sendEmail();
             //showToastMessage("share app");
             return true;
         }
+        //if (id == R.id.test) {
+        //    consumePremium();
+        //    showToastMessage("you are no longer premium");
+        //    //showToastMessage("share app");
+        //    return true;
+        //}
 
         //if (id == R.id.action_settings) {
         //    //chosenCategory = "All";
@@ -508,6 +751,8 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     public void showChangeLog() {
         //changeLogIsOpen = true;
@@ -641,8 +886,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
     /**press back twice to exit*/
     private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
     private long mBackPressed;
-    @Override
-    public void onBackPressed() {
+    private void goBack() {
         if(ttsManager.isSpeaking()){
             speakJoke("");
         }else {
@@ -666,5 +910,9 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
                 }
             }
         }
+    }
+    @Override
+    public void onBackPressed() {
+        goBack();
     }
 }

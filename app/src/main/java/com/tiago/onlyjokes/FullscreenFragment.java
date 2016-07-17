@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -68,6 +67,7 @@ public class FullscreenFragment extends Fragment {
                 MainActivity.currentJoke = FullscreenViewpagerAdapter.dbList.get(position).getEmail();
                 MainActivity.currentId = FullscreenViewpagerAdapter.dbList.get(position).getJoke();
                 ((MainActivity)getActivity()).showInterstitial();
+                ((MainActivity)getActivity()).addSeen();
 
                 System.out.println("onPageSelected - position: "+position);
             }
@@ -80,16 +80,7 @@ public class FullscreenFragment extends Fragment {
         setHasOptionsMenu(true);
         MainActivity.currentJoke = FullscreenViewpagerAdapter.dbList.get(MainActivity.listPos).getEmail();
         MainActivity.currentId = FullscreenViewpagerAdapter.dbList.get(MainActivity.listPos).getJoke();
-
-        favsBT = (Button)rootView.findViewById(R.id.favsBT);
-        //favsBT.setOnClickListener(new View.OnClickListener() {
-        //    public void onClick(View view) {
-        //
-
-        //    }
-        //});
-
-
+        //((MainActivity)getActivity()).addSeen();
         return rootView;
     }
 
