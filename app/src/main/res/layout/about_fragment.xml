@@ -27,7 +27,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView3"
-                    android:layout_weight="1"
                     android:textSize="@dimen/t_18sp"
                     android:text="About"
                     android:textStyle="bold"
@@ -37,7 +36,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/versionTV"
-                    android:layout_weight="1"
                     android:textSize="@dimen/t_18sp"
                     android:text="version: 1.0"
                     android:layout_alignParentTop="true"
@@ -91,9 +89,6 @@
                         android:text="Developed by: "
                         android:id="@+id/someTV2"
                         android:textSize="@dimen/t_18sp"
-                        android:layout_below="@+id/pillsDescriptionTV"
-                        android:layout_alignRight="@+id/pillsDescriptionTV"
-                        android:layout_alignEnd="@+id/pillsDescriptionTV"
                         android:textStyle="bold" />
 
                     <TextView

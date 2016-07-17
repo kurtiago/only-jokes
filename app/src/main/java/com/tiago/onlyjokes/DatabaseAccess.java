@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -95,7 +94,7 @@ public class DatabaseAccess {
         Log.i("insert into DB", "After insert");
     }*/
     /* Retrieve  data from database */
-    public List<DatabaseModel> getDataFromDB(String tag)throws SQLException{
+    /**public List<DatabaseModel> getDataFromDB(String tag)throws SQLException{
         List<DatabaseModel> modelList = new ArrayList<DatabaseModel>();
         String query = "select * from "+DB_TABLE+" where "+KEY_TAGS+" LIKE '%" + tag + "%'";
         Cursor cursor = database.rawQuery(query,null);
@@ -114,17 +113,15 @@ public class DatabaseAccess {
         }
         //Log.d("student data", modelList.toString());
         return modelList;
-    }
+    }*/
 
     /* Retrieve  data from database */
     public List<DatabaseModel> getDataFromDBnew(String tag, String inputText)throws SQLException{
         List<DatabaseModel> modelList = new ArrayList<DatabaseModel>();
         Cursor cursor;
         if("favorites".equals(MainActivity.screen)){
-            //String[] names = { "58", "89" }; // do whatever is needed first
-            //String[] names = (String[]) MainActivity.favsList.toArray(); // wroing
             String[] names = MainActivity.favsList.toArray(new String[MainActivity.favsList.size()]); // do whatever is needed first
-            System.out.println("cheguei getDataFromDBnew - favs string array: "+names);
+            //System.out.println("cheguei getDataFromDBnew - favs string array: "+names);
             String query = "SELECT * FROM "  + DB_TABLE +  " WHERE "+KEY_ID+" IN (" + makePlaceholders(names.length) + ")";
             cursor = database.rawQuery(query, names);
         }else {//it is not favorites

@@ -101,16 +101,12 @@
                 <TextView
                     android:id="@+id/jokeTV"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="insert your joke here"
                     android:textIsSelectable="false"
                     style="@style/jokeTV"
                     android:textSize="@dimen/t_22sp"
-                    android:nestedScrollingEnabled="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_below="@+id/relativeLayout"
-                    android:layout_alignBottom="@+id/scrollView" />
+                    android:nestedScrollingEnabled="true" />
             </ScrollView>
 
 

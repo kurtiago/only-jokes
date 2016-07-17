@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -18,7 +17,6 @@ import android.widget.Button;
 public class FullscreenFragment extends Fragment {
     static ViewPager viewPager;
     FloatingActionButton fab;
-    Button favsBT;
     public FullscreenFragment() {
     }
 
@@ -54,7 +52,7 @@ public class FullscreenFragment extends Fragment {
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(MainActivity.listPos);
         //viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        viewPager.setPageTransformer(true, (ViewPager.PageTransformer) new DepthPageTransformer());
+        viewPager.setPageTransformer(true, new DepthPageTransformer());
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -67,7 +65,7 @@ public class FullscreenFragment extends Fragment {
                 MainActivity.currentJoke = FullscreenViewpagerAdapter.dbList.get(position).getEmail();
                 MainActivity.currentId = FullscreenViewpagerAdapter.dbList.get(position).getJoke();
                 ((MainActivity)getActivity()).showInterstitial();
-                ((MainActivity)getActivity()).addSeen();
+                //((MainActivity)getActivity()).addSeen();
 
                 System.out.println("onPageSelected - position: "+position);
             }

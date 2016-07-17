@@ -39,7 +39,8 @@
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginRight="@dimen/t_15dp" />
+            android:layout_marginRight="@dimen/t_15dp"
+            android:contentDescription="icon" />
 
     </RelativeLayout>
 

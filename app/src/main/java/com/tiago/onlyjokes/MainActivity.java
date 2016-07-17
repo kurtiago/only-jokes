@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
     static boolean showBanner = true;
     static boolean showInterstitial = true;
     static ArrayList<String> favsList = new ArrayList<>();
-    static ArrayList<String> seenList = new ArrayList<>();
+    //static ArrayList<String> seenList = new ArrayList<>();
     boolean nightModeSet = false;
 
     static Float newVersion = 1.3F; //TODO increment every update
@@ -243,9 +242,9 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
             new IabHelper.OnConsumeFinishedListener() {
                 public void onConsumeFinished(Purchase purchase,
                                               IabResult result) {
-                    Log.d(TAG, "onConsumeFinished: aqui");
                     //showToastMessage("xeguei yeah");
                     if (result.isSuccess()) {
+                        Log.d(TAG, "onConsumeFinished: aqui");
                         //isPremium = true;
                         //clickButton.setEnabled(true);
                     } else {
@@ -259,11 +258,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
     boolean verifyDeveloperPayload(Purchase p) {
         Log.d(TAG, "verifyDeveloperPayload: aqui");
         String responsePayload = p.getDeveloperPayload();
-        if(responsePayload != null && (responsePayload.equals(payloadPremium))){
-            return true;
-        }else{
-            return false;
-        }
+        return responsePayload != null && (responsePayload.equals(payloadPremium));
     }
 
     @Override
@@ -303,23 +298,18 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
 
     public void consumePremium(){
         shouldConsume = true;
-        //if(mHelper==null){//it was a test
-        //    mHelper = new IabHelper(this, base64EncodedPublicKey);
-        //}
         mHelper.queryInventoryAsync(mReceivedInventoryListener);
-        //showToastMessage("you consumed this crap");
+        showToastMessage("you consumed this crap");
     }
 
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener
             = new IabHelper.OnIabPurchaseFinishedListener() {
-
-
         public void onIabPurchaseFinished(IabResult result,
                                           Purchase purchase) {
             Log.d(TAG, "onIabPurchaseFinished: aqui");
             if (result.isFailure()) {
                 // Handle error
-                return;
+                //return;
             } else if (purchase.getSku().equals(SKU_PREMIUM)) {
                 //consumeItem(); //the line below is from this method, which is useless now
                 mHelper.queryInventoryAsync(mReceivedInventoryListener);
@@ -343,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
                 mAdView.resume();
             }
         }
-        loadSeen();
+        //loadSeen();
     }
 
     @Override
@@ -351,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
         if (mAdView != null) {
             mAdView.pause();
         }
-        saveSeen();
+        //saveSeen();
         super.onPause();
     }
 
@@ -369,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
     }
 
     public void clickStarButton(View v){
-        v = (Button)findViewById(R.id.favsBT);
+        v = findViewById(R.id.favsBT);
         if(!favsList.contains(currentId)){ //it is not a favorite
             addFavs();
             if (v != null) {
@@ -388,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
 
 
     public void deleteFav(){
-        favsList.remove(new String(currentId));
+        favsList.remove(new String(currentId));//don't change this line
         showToastMessage("Favorite deleted");
         saveFavs();
     }
@@ -403,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
             showToastMessage("Something happened.");
         }
     }
-    static boolean shouldInstantiate = false; //fix for calling this many times
+    /**static boolean shouldInstantiate = false; //fix for calling this many times
     public void addSeen(){
         ImageView newIV = (ImageView) findViewById(R.id.newIV);
         if(!seenList.contains(currentId)){
@@ -453,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
                 seenList.add(str);
             System.out.println("cheguei loadSeen - seenList: "+seenList);
         }
-    }
+    }*/
     public void saveFavs(){
         Set<String> set = new HashSet<String>();
         set.addAll(favsList);

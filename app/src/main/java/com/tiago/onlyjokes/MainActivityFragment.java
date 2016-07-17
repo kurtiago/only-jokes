@@ -109,20 +109,24 @@ public class MainActivityFragment extends Fragment implements CategoriesRecycler
         /**if(MainActivity.chosenCategory.equals("Search")){
             ((MainActivity)getActivity()).inflateFragment("search");
         }else */
-        if(MainActivity.chosenCategory.equals("Favorites")){
-            if(MainActivity.favsList.size()>0) {
-                ((MainActivity) getActivity()).inflateFragment("favorites");
-            }else{
-                ((MainActivity)getActivity()).showToastMessage("Add some favorites first!");
-            }
-        }else if(MainActivity.chosenCategory.equals("Adult")){
-            if(MainActivity.isPro) {
-                ((MainActivity)getActivity()).inflateFragment("fullscreen");
-            }else{
-                ((MainActivity)getActivity()).showToastMessage("Buy pro version to unlock adult jokes.");
-            }
-        }else{
-            ((MainActivity)getActivity()).inflateFragment("fullscreen");
+        switch (MainActivity.chosenCategory) {
+            case "Favorites":
+                if (MainActivity.favsList.size() > 0) {
+                    ((MainActivity) getActivity()).inflateFragment("favorites");
+                } else {
+                    ((MainActivity) getActivity()).showToastMessage("Add some favorites first!");
+                }
+                break;
+            case "Adult":
+                if (MainActivity.isPro) {
+                    ((MainActivity) getActivity()).inflateFragment("fullscreen");
+                } else {
+                    ((MainActivity) getActivity()).showToastMessage("Buy pro version to unlock adult jokes.");
+                }
+                break;
+            default:
+                ((MainActivity) getActivity()).inflateFragment("fullscreen");
+                break;
         }
 
         // Obtain the FirebaseAnalytics instance.
