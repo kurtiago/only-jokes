@@ -29,7 +29,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,9 +39,12 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.analytics.FirebaseAnalytics.Param;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+
 import com.tiago.onlyjokes.util.IabHelper;
 import com.tiago.onlyjokes.util.IabResult;
 import com.tiago.onlyjokes.util.Inventory;
@@ -145,6 +147,12 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        if(BuildConfig.DEBUG){
+            mFirebaseAnalytics.setUserProperty( "user", "tester");
+        }else{
+            mFirebaseAnalytics.setUserProperty( "user", "normal");
+        }
+
         //remote config
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
@@ -217,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean("isPro", isPro);
             editor.apply();
+            if(isPro) mFirebaseAnalytics.setUserProperty( "user", "pro");
 
             // Have we been disposed of in the meantime? If so, quit.
             if (mHelper == null) return;
@@ -319,6 +328,28 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
         }
     };
     /**In app billing*/
+
+
+    public void sendDataAnalytics(){//v1.4 sends data after a while (only if the user is READING the joke)
+        mAnalyticsHandler.removeCallbacks(mAnalyticsRunnable);
+        mAnalyticsHandler.postDelayed(mAnalyticsRunnable, 1500);
+    }
+
+    private final Handler mAnalyticsHandler = new Handler();
+    private final Runnable mAnalyticsRunnable = new Runnable() {
+        public void run() {
+            // Obtain the FirebaseAnalytics instance.
+            FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(MainActivity.this);
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "category");
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "selected_category");
+            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, MainActivity.chosenCategory);
+            //bundle.putString(FirebaseAnalytics.Param.VALUE, MainActivity.chosenCategory);
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, MainActivity.chosenCategory);//this is the correct way to show analytics
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+            Log.d(TAG, "sendDataAnalytics: SENT");        }
+    };
+
 
     @Override
     public void onResume() {
@@ -513,16 +544,17 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
         notificationManager.notify(notificationId, nBuilder.build());
     }
 
-    static boolean shouldShowToast = true; //runs pro version toast only once
+    static boolean shouldShowProVersionToast = true; //runs pro version toast only once
     private final Handler checkProHandler = new Handler();
     private final Runnable checkProRunnable = new Runnable() {
         public void run() {
             if(isPro){
-                if(shouldShowToast){
+                if(shouldShowProVersionToast){
                     showToastMessage("You have pro version! Thanks for supporting this app.");
-                    shouldShowToast = false;
+                    shouldShowProVersionToast = false;
+                    FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(MainActivity.this);
+                    analytics.setUserProperty( "user", "pro");
                 }
-
             }else{
                 if(showInterstitial){
                     mInterstitialAd = new InterstitialAd(MainActivity.this);
@@ -813,6 +845,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesRecycle
 
         Bundle payload = new Bundle();
         payload.putString(FirebaseAnalytics.Param.VALUE, "app shared");
+        payload.putString(Param.ITEM_NAME, "app_shared");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SHARE, payload);
     }
 

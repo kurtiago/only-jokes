@@ -128,8 +128,9 @@ public class MainActivityFragment extends Fragment implements CategoriesRecycler
                 ((MainActivity) getActivity()).inflateFragment("fullscreen");
                 break;
         }
-
-        // Obtain the FirebaseAnalytics instance.
+        ((MainActivity)getActivity()).sendDataAnalytics();//1.4
+        /**
+         // Obtain the FirebaseAnalytics instance.
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
         //Bundle payload = new Bundle();
         //payload.putString(FirebaseAnalytics.Param.VALUE, MainActivity.chosenCategory);
@@ -137,10 +138,11 @@ public class MainActivityFragment extends Fragment implements CategoriesRecycler
 
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "category");
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, MainActivity.chosenCategory);
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-        //System.out.println("-- MainActivityFragment -onItemClick - chosenCategory: "+MainActivity.chosenCategory);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "selected_category");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, MainActivity.chosenCategory);
+        //bundle.putString(FirebaseAnalytics.Param.VALUE, MainActivity.chosenCategory);
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, MainActivity.chosenCategory);//this is the correct way to show analytics
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);*/
     }
 
 }

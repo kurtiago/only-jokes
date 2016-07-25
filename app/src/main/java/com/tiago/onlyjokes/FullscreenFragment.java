@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -66,8 +68,9 @@ public class FullscreenFragment extends Fragment {
                 MainActivity.currentId = FullscreenViewpagerAdapter.dbList.get(position).getJoke();
                 ((MainActivity)getActivity()).showInterstitial();
                 //((MainActivity)getActivity()).addSeen();
-
                 System.out.println("onPageSelected - position: "+position);
+
+                ((MainActivity)getActivity()).sendDataAnalytics();//1.4
             }
 
             @Override
